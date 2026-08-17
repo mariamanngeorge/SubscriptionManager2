@@ -1,0 +1,333 @@
+:root {
+  --bg: #111827;
+  --card: #1f2937;
+  --card-light: #273449;
+  --text: #d1d5db;
+  --text-h: #ffffff;
+  --border: #374151;
+  --accent: #8b5cf6;
+
+  --sans: Arial, sans-serif;
+
+  font-family: var(--sans);
+  color: var(--text);
+  background: var(--bg);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* -------------------- */
+/* Body */
+/* -------------------- */
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  font-family: Arial, sans-serif;
+
+  background: #111827;
+  color: #d1d5db;
+}
+
+/* -------------------- */
+/* Root */
+/* -------------------- */
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+}
+
+/* -------------------- */
+/* Navbar */
+/* -------------------- */
+
+nav {
+  width: 100%;
+
+  background: #1f2937;
+
+  padding: 22px 30px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+
+  border-bottom: 1px solid #374151;
+}
+
+/* Subscription Manager */
+
+nav h2 {
+  margin: 0 0 15px;
+
+  color: #ffffff;
+
+  font-family: Arial, sans-serif;
+
+  font-size: 28px;
+  font-weight: 700;
+
+  text-align: center;
+
+  letter-spacing: 0.5px;
+}
+
+/* Navigation links container */
+
+nav div {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 30px;
+}
+
+/* Navigation links */
+
+nav a {
+  color: #d1d5db;
+
+  text-decoration: none;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Hover */
+
+nav a:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* -------------------- */
+/* Page Content */
+/* -------------------- */
+
+main {
+  width: 100%;
+  max-width: 1100px;
+
+  margin: 0 auto;
+
+  padding: 40px 30px;
+
+  box-sizing: border-box;
+}
+
+/* -------------------- */
+/* Headings */
+/* -------------------- */
+
+h1,
+h2,
+h3 {
+  color: #ffffff;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: 700;
+
+  margin: 30px 0 20px;
+
+  text-align: center;
+}
+
+h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+/* -------------------- */
+/* Paragraphs */
+/* -------------------- */
+
+p {
+  margin: 0 0 15px;
+
+  line-height: 1.6;
+}
+
+/* -------------------- */
+/* Forms */
+/* -------------------- */
+
+form {
+  width: 100%;
+  max-width: 450px;
+
+  margin: 30px auto;
+
+  padding: 30px;
+
+  background: #1f2937;
+
+  border: 1px solid #374151;
+  border-radius: 12px;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.25);
+
+  box-sizing: border-box;
+}
+
+/* -------------------- */
+/* Labels */
+/* -------------------- */
+
+label {
+  display: inline-block;
+
+  margin-bottom: 7px;
+
+  color: #ffffff;
+
+  font-weight: 600;
+}
+
+/* -------------------- */
+/* Inputs */
+/* -------------------- */
+
+input,
+select {
+  width: 100%;
+
+  padding: 12px;
+
+  border: 1px solid #4b5563;
+  border-radius: 7px;
+
+  background: #111827;
+
+  color: #ffffff;
+
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+
+  box-sizing: border-box;
+
+  outline: none;
+}
+
+input::placeholder {
+  color: #9ca3af;
+}
+
+input:focus,
+select:focus {
+  border-color: #8b5cf6;
+}
+
+/* Checkbox */
+
+input[type="checkbox"] {
+  width: auto;
+
+  margin-right: 8px;
+}
+
+/* -------------------- */
+/* Buttons */
+/* -------------------- */
+
+button {
+  background: #8b5cf6;
+
+  color: #ffffff;
+
+  border: none;
+  border-radius: 7px;
+
+  padding: 12px 22px;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
+}
+
+button:hover {
+  background: #7c3aed;
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* -------------------- */
+/* Horizontal Line */
+/* -------------------- */
+
+hr {
+  border: none;
+
+  border-top: 1px solid #374151;
+
+  margin: 25px 0;
+}
+
+/* -------------------- */
+/* Mobile */
+/* -------------------- */
+
+@media (max-width: 768px) {
+  nav {
+    padding: 20px;
+  }
+
+  nav h2 {
+    font-size: 37px;
+    font-family:Serif ;
+
+  }
+
+  nav div {
+    gap: 18px;
+
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    font-size: 17px;
+  }
+
+  main {
+    padding: 25px 20px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  form {
+    padding: 22px;
+  }
+}
