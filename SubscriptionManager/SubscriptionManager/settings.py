@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'SubscriptionManager'
+    'subscriptions'
     
     # Add your local Django app names here if you have any (e.g., 'core', 'subscriptions', 'api')
 ]
