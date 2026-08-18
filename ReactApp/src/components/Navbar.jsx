@@ -1,70 +1,46 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import "./Navbar.css";
+// src/components/Navbar.jsx
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { 
+  LayoutDashboard, 
+  PlusCircle, 
+  LogIn, 
+  UserPlus 
+} from 'lucide-react';
+import './Navbar.css';
 
-function Navbar() {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const isAuthenticated = Boolean(localStorage.getItem("access"));
-
-  const handleLogout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    navigate("/login");
-  };
+const Navbar = () => {
+  const navItems = [
+    { name: 'Dashboard', path: '/dashboard', icon: <LayoutDashboard size={14} /> },
+    { name: 'Add Subscription', path: '/add-subscription', icon: <PlusCircle size={14} /> },
+    { name: 'Login', path: '/login', icon: <LogIn size={14} /> },
+    { name: 'Register', path: '/register', icon: <UserPlus size={14} /> },
+  ];
 
   return (
-    <nav className="navbar">
-      {/* LOGO */}
-      <Link to={isAuthenticated ? "/dashboard" : "/login"} className="navbar-logo">
-        <span>Subscription</span>
-        <strong>Manager</strong>
-      </Link>
+    <nav className="navbar-container">
+      {/* Large Brand Heading */}
+      <div className="brand-header">
+        <h1 className="brand-title">Subscription Manager</h1>
+      </div>
 
-      {/* NAVIGATION */}
-      <div className="navbar-links">
-        {!isAuthenticated ? (
-          <>
-            <Link
-              to="/login"
-              className={location.pathname === "/login" ? "active-link" : ""}
-            >
-              Login
-            </Link>
-
-            <Link
-              to="/register"
-              className={location.pathname === "/register" ? "active-link" : ""}
-            >
-              Register
-            </Link>
-          </>
-        ) : (
-          <>
-            <Link
-              to="/dashboard"
-              className={location.pathname === "/dashboard" ? "active-link" : ""}
-            >
-              Dashboard
-            </Link>
-
-            <Link
-              to="/add-subscription"
-              className={
-                location.pathname === "/add-subscription" ? "active-link" : ""
-              }
-            >
-              Add Subscription
-            </Link>
-
-            <button className="logout-button" onClick={handleLogout}>
-              Logout
-            </button>
-          </>
-        )}
+      {/* Tabs with Underline Indicator */}
+      <div className="tabs-container">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.name}
+            to={item.path}
+            className={({ isActive }) => 
+              isActive ? 'tab-item active' : 'tab-item'
+            }
+          >
+            <span className="tab-icon">{item.icon}</span>
+            <span className="tab-label">{item.name}</span>
+          </NavLink>
+        ))}
       </div>
     </nav>
   );
-}
+};
 
 export default Navbar;
