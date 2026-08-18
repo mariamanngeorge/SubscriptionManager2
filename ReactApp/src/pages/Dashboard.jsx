@@ -23,6 +23,28 @@ function Dashboard() {
     }
   };
 
+  // Calculate Monthly Spend
+  const monthlySpend = subscriptions.reduce((total, subscription) => {
+    const amount = Number(subscription.amount) || 0;
+
+    if (subscription.billing_cycle === "annual") {
+      return total + amount / 12;
+    }
+
+    return total + amount;
+  }, 0);
+
+  // Calculate Annual Spend
+  const annualSpend = subscriptions.reduce((total, subscription) => {
+    const amount = Number(subscription.amount) || 0;
+
+    if (subscription.billing_cycle === "annual") {
+      return total + amount;
+    }
+
+    return total + amount * 12;
+  }, 0);
+
   const getDaysUntilPayment = (paymentDate) => {
     if (!paymentDate) {
       return null;
@@ -57,6 +79,49 @@ function Dashboard() {
   return (
     <main>
       <h1>My Subscriptions</h1>
+
+      {/* Spending Summary */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "20px",
+          marginBottom: "30px",
+        }}
+      >
+        {/* Monthly Spend */}
+        <div
+          style={{
+            background: "#1f2937",
+            border: "1px solid #374151",
+            borderRadius: "12px",
+            padding: "25px",
+            textAlign: "center",
+          }}
+        >
+          <h2>💰 Monthly Spend</h2>
+          <h1 style={{ color: "#a78bfa" }}>
+            ₹{monthlySpend.toFixed(2)}
+          </h1>
+        </div>
+
+        {/* Annual Spend */}
+        <div
+          style={{
+            background: "#1f2937",
+            border: "1px solid #374151",
+            borderRadius: "12px",
+            padding: "25px",
+            textAlign: "center",
+          }}
+        >
+          <h2>📊 Annual Spend</h2>
+          <h1 style={{ color: "#34d399" }}>
+            ₹{annualSpend.toFixed(2)}
+          </h1>
+        </div>
+      </div>
 
       <div
         style={{
@@ -117,9 +182,7 @@ function Dashboard() {
                 }}
               >
                 {/* Service Name */}
-                <h2>
-                  {subscription.service_name}
-                </h2>
+                <h2>{subscription.service_name}</h2>
 
                 {/* Amount */}
                 <h3>
