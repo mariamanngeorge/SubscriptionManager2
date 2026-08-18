@@ -1,3 +1,5 @@
+/* ================= GLOBAL ================= */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,108 +7,36 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+
 /* ================= PAGE ================= */
 
 .login-page {
   position: relative;
+
   min-height: 100vh;
+
   display: flex;
   flex-direction: column;
+
   background: #080a14;
+
   color: white;
+
   overflow: hidden;
 }
 
-/* ================= NAVBAR ================= */
 
-.login-navbar {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 22px 55px;
-
-  position: relative;
-  z-index: 20;
-
-  background: rgba(18, 22, 38, 0.92);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-  backdrop-filter: blur(15px);
-}
-
-/* Subscription Manager */
-
-.navbar-logo {
-  font-size: 1.45rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.navbar-logo span {
-  color: white;
-}
-
-.navbar-logo strong {
-  color: #9b5cff;
-  margin-left: 3px;
-}
-
-/* Navbar buttons */
-
-.navbar-links {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-
-  background: rgba(255, 255, 255, 0.04);
-
-  padding: 6px;
-
-  border-radius: 12px;
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.navbar-links button {
-  background: transparent;
-  border: none;
-
-  color: #aeb6c8;
-
-  padding: 9px 16px;
-
-  border-radius: 8px;
-
-  font-size: 0.9rem;
-  cursor: pointer;
-
-  transition: 0.2s ease;
-}
-
-.navbar-links button:hover {
-  color: white;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.navbar-links button.active-link {
-  background: linear-gradient(
-    135deg,
-    #8b5cf6,
-    #6366f1
-  );
-
-  color: white;
-}
-
-/* ================= BACKGROUND ================= */
+/* ================= BACKGROUND GLOW ================= */
 
 .glow {
   position: absolute;
+
   border-radius: 50%;
+
   filter: blur(140px);
+
   pointer-events: none;
+
   z-index: 0;
 }
 
@@ -130,7 +60,8 @@
   right: 5%;
 }
 
-/* ================= APP LOGOS ================= */
+
+/* ================= FLOATING APP LOGOS ================= */
 
 .app-logo {
   position: absolute;
@@ -197,6 +128,9 @@
   color: #fc3c44;
 }
 
+
+/* ================= FLOAT ANIMATION ================= */
+
 @keyframes floatLogo {
 
   0% {
@@ -209,7 +143,8 @@
 
 }
 
-/* ================= MAIN ================= */
+
+/* ================= MAIN CONTENT ================= */
 
 .login-content {
   flex: 1;
@@ -233,10 +168,12 @@
   z-index: 5;
 }
 
-/* ================= LEFT ================= */
+
+/* ================= LEFT INTRO ================= */
 
 .login-intro {
   flex: 1;
+
   max-width: 560px;
 }
 
@@ -272,9 +209,11 @@
   );
 
   background-clip: text;
+
   -webkit-background-clip: text;
 
   color: transparent;
+
   -webkit-text-fill-color: transparent;
 }
 
@@ -290,10 +229,12 @@
   margin-bottom: 30px;
 }
 
+
 /* ================= FEATURES ================= */
 
 .features {
   display: flex;
+
   flex-direction: column;
 
   gap: 13px;
@@ -329,6 +270,7 @@
   font-size: 13px;
 }
 
+
 /* ================= LOGIN CARD ================= */
 
 .login-card {
@@ -347,6 +289,7 @@
 
   backdrop-filter: blur(18px);
 }
+
 
 /* ================= CARD HEADER ================= */
 
@@ -374,9 +317,10 @@
   font-size: 0.88rem;
 }
 
+
 /* ================= FORM ================= */
 
-form {
+.login-card form {
   display: flex;
 
   flex-direction: column;
@@ -429,6 +373,7 @@ form {
     0 0 0 3px rgba(139, 92, 246, 0.2);
 }
 
+
 /* ================= LOGIN BUTTON ================= */
 
 .login-button {
@@ -465,6 +410,7 @@ form {
   filter: brightness(1.1);
 }
 
+
 /* ================= ERROR ================= */
 
 .login-error {
@@ -485,7 +431,8 @@ form {
   font-size: 0.85rem;
 }
 
-/* ================= REGISTER ================= */
+
+/* ================= REGISTER LINK ================= */
 
 .register-link {
   margin-top: 22px;
@@ -515,6 +462,7 @@ form {
   text-decoration: underline;
 }
 
+
 /* ================= FOOTER ================= */
 
 .login-footer {
@@ -533,23 +481,10 @@ form {
   z-index: 5;
 }
 
+
 /* ================= MOBILE ================= */
 
 @media (max-width: 960px) {
-
-  .login-navbar {
-    flex-direction: column;
-
-    gap: 15px;
-
-    padding: 20px;
-  }
-
-  .navbar-links {
-    flex-wrap: wrap;
-
-    justify-content: center;
-  }
 
   .login-content {
     flex-direction: column;
@@ -569,6 +504,7 @@ form {
 
   .intro-text {
     margin-left: auto;
+
     margin-right: auto;
   }
 
@@ -585,4 +521,25 @@ form {
   .app-logo {
     display: none;
   }
+}
+
+
+/* ================= SMALL MOBILE ================= */
+
+@media (max-width: 600px) {
+
+  .login-content {
+    padding: 30px 15px;
+  }
+
+  .login-intro h2 {
+    font-size: 2.2rem;
+
+    letter-spacing: -1px;
+  }
+
+  .login-card {
+    padding: 30px 22px;
+  }
+
 }
