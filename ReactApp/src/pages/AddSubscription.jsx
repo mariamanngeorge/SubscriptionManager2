@@ -1,292 +1,307 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import API from "../api";
 
-function Dashboard() {
-  const [subscriptions, setSubscriptions] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState("");
+function AddSubscription() {
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
+  const [formData, setFormData] = useState({
+    service_name: "",
+    amount: "",
+    billing_cycle: "monthly",
+    last_payment_date: "",
+    auto_pay: false,
+    reminder_days: 3,
+    end_date: "",
+  });
 
-  const fetchSubscriptions = async () => {
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
     try {
-      const response = await API.get("subscriptions/");
-      setSubscriptions(response.data);
+      const response = await API.post("subscriptions/", {
+        service_name: formData.service_name,
+        amount: formData.amount,
+        billing_cycle: formData.billing_cycle,
+        last_payment_date: formData.last_payment_date || null,
+        auto_pay: formData.auto_pay,
+        reminder_days: Number(formData.reminder_days),
+        end_date: formData.end_date || null,
+      });
+
+      console.log("Subscription added:", response.data);
+
+      setSuccess("Subscription added successfully!");
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1000);
+
     } catch (error) {
-      console.error(error);
-      setMessage("Unable to load subscriptions.");
+      console.error("Add subscription error:", error);
+
+      console.log("Status:", error.response?.status);
+      console.log("Response:", error.response?.data);
+
+      if (error.response?.status === 401) {
+        setError("Session expired. Please login again.");
+      } else if (error.response?.status === 400) {
+        setError(
+          JSON.stringify(error.response.data)
+        );
+      } else if (error.response?.status === 404) {
+        setError("Subscription API endpoint not found.");
+      } else if (error.response?.status === 500) {
+        setError("Server error. Please check Django backend.");
+      } else {
+        setError("Unable to add subscription.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const getDaysUntilPayment = (paymentDate) => {
-    if (!paymentDate) return null;
-
-    const today = new Date();
-    const payment = new Date(paymentDate);
-
-    today.setHours(0, 0, 0, 0);
-    payment.setHours(0, 0, 0, 0);
-
-    const difference = payment - today;
-
-    return Math.ceil(
-      difference / (1000 * 60 * 60 * 24)
-    );
-  };
-
-  // Only active subscriptions are included
-  const activeSubscriptions = subscriptions.filter(
-    (subscription) => subscription.is_active
-  );
-
-  // Calculate monthly spending
-  const totalMonthlySpend = activeSubscriptions.reduce(
-    (total, subscription) => {
-      const amount = Number(
-        subscription.amount ??
-        subscription.monthly_cost ??
-        0
-      );
-
-      if (subscription.billing_cycle === "annual") {
-        return total + amount / 12;
-      }
-
-      return total + amount;
-    },
-    0
-  );
-
-  // Annual spending
-  const totalAnnualSpend = totalMonthlySpend * 12;
-
-  if (loading) {
-    return (
-      <main>
-        <h1>Dashboard</h1>
-        <p>Loading subscriptions...</p>
-      </main>
-    );
-  }
-
   return (
-    <main>
-      <h1>My Subscriptions</h1>
+    <main
+      style={{
+        maxWidth: "600px",
+        margin: "40px auto",
+        padding: "30px",
+      }}
+    >
+      <h1>Add Subscription</h1>
 
-      {/* SPENDING SUMMARY */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "repeat(auto-fit, minmax(220px, 1fr))",
-          gap: "20px",
-          marginBottom: "30px",
-        }}
-      >
-        {/* Monthly */}
+      <p>
+        Add a subscription to start tracking your
+        recurring expenses.
+      </p>
+
+      {error && (
         <div
           style={{
-            background: "#1f2937",
-            border: "1px solid #374151",
-            borderRadius: "12px",
-            padding: "25px",
-            textAlign: "center",
+            background: "#7f1d1d",
+            color: "#fff",
+            padding: "12px",
+            borderRadius: "8px",
+            marginBottom: "20px",
           }}
         >
-          <h2>💰 Monthly Spend</h2>
-
-          <h1
-            style={{
-              margin: "10px 0 0",
-              color: "#a78bfa",
-            }}
-          >
-            ₹{totalMonthlySpend.toFixed(2)}
-          </h1>
-        </div>
-
-        {/* Annual */}
-        <div
-          style={{
-            background: "#1f2937",
-            border: "1px solid #374151",
-            borderRadius: "12px",
-            padding: "25px",
-            textAlign: "center",
-          }}
-        >
-          <h2>📊 Annual Spend</h2>
-
-          <h1
-            style={{
-              margin: "10px 0 0",
-              color: "#34d399",
-            }}
-          >
-            ₹{totalAnnualSpend.toFixed(2)}
-          </h1>
-        </div>
-      </div>
-
-      {/* ADD BUTTON */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          marginBottom: "30px",
-        }}
-      >
-        <Link to="/add-subscription">
-          <button>Add Subscription</button>
-        </Link>
-      </div>
-
-      {message && <p>{message}</p>}
-
-      {/* NO SUBSCRIPTIONS */}
-      {activeSubscriptions.length === 0 ? (
-        <div
-          style={{
-            textAlign: "center",
-            padding: "40px",
-            background: "#1f2937",
-            borderRadius: "12px",
-            border: "1px solid #374151",
-          }}
-        >
-          <h2>No Active Subscriptions</h2>
-
-          <p>
-            Add your first subscription to start
-            managing your expenses.
-          </p>
-        </div>
-      ) : (
-        /* SUBSCRIPTION CARDS */
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px",
-          }}
-        >
-          {activeSubscriptions.map((subscription) => {
-            const daysUntilPayment =
-              getDaysUntilPayment(
-                subscription.billing_date
-              );
-
-            const amount = Number(
-              subscription.amount ??
-              subscription.monthly_cost ??
-              0
-            );
-
-            const isAnnual =
-              subscription.billing_cycle === "annual";
-
-            return (
-              <div
-                key={subscription.id}
-                style={{
-                  background: "#1f2937",
-                  border: "1px solid #374151",
-                  borderRadius: "12px",
-                  padding: "22px",
-                  boxShadow:
-                    "0 8px 20px rgba(0,0,0,0.2)",
-                }}
-              >
-                <h2>
-                  {subscription.service_name}
-                </h2>
-
-                <h3>
-                  ₹{amount.toFixed(2)}
-
-                  <span
-                    style={{
-                      fontSize: "14px",
-                      color: "#9ca3af",
-                    }}
-                  >
-                    {isAnnual
-                      ? " / year"
-                      : " / month"}
-                  </span>
-                </h3>
-
-                <hr />
-
-                <p>
-                  💳 <strong>Last Payment:</strong>{" "}
-                  {subscription.last_payment_date ||
-                    "Not specified"}
-                </p>
-
-                <p>
-                  📅 <strong>Next Payment:</strong>{" "}
-                  {subscription.billing_date ||
-                    "Not specified"}
-                </p>
-
-                <p>
-                  🔔 <strong>Reminder:</strong>{" "}
-                  {subscription.reminder_days} days
-                  before
-                </p>
-
-                <p>
-                  🔄 <strong>Auto-Pay:</strong>{" "}
-                  {subscription.auto_pay
-                    ? "Enabled"
-                    : "Disabled"}
-                </p>
-
-                <p>
-                  ⏳ <strong>End Date:</strong>{" "}
-                  {subscription.end_date ||
-                    "Not specified"}
-                </p>
-
-                <p>
-                  🟢 <strong>Status:</strong> Active
-                </p>
-
-                <hr />
-
-                {daysUntilPayment !== null &&
-                daysUntilPayment < 0 ? (
-                  <p style={{ color: "#f87171" }}>
-                    ⚠️ Payment date has passed
-                  </p>
-                ) : daysUntilPayment === 0 ? (
-                  <p style={{ color: "#fbbf24" }}>
-                    🔔 Payment is due today
-                  </p>
-                ) : (
-                  daysUntilPayment !== null &&
-                  daysUntilPayment <=
-                    subscription.reminder_days && (
-                    <p style={{ color: "#fbbf24" }}>
-                      🔔 Payment due in{" "}
-                      {daysUntilPayment} days
-                    </p>
-                  )
-                )}
-              </div>
-            );
-          })}
+          {error}
         </div>
       )}
+
+      {success && (
+        <div
+          style={{
+            background: "#065f46",
+            color: "#fff",
+            padding: "12px",
+            borderRadius: "8px",
+            marginBottom: "20px",
+          }}
+        >
+          {success}
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit}>
+
+        {/* SERVICE NAME */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>Service Name</label>
+
+          <input
+            type="text"
+            name="service_name"
+            placeholder="Netflix"
+            value={formData.service_name}
+            onChange={handleChange}
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        {/* AMOUNT */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>Amount (₹)</label>
+
+          <input
+            type="number"
+            name="amount"
+            placeholder="499"
+            value={formData.amount}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        {/* BILLING CYCLE */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>Billing Cycle</label>
+
+          <select
+            name="billing_cycle"
+            value={formData.billing_cycle}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+            }}
+          >
+            <option value="monthly">
+              Monthly
+            </option>
+
+            <option value="annual">
+              Annual
+            </option>
+          </select>
+        </div>
+
+        {/* LAST PAYMENT DATE */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>Last Payment Date</label>
+
+          <input
+            type="date"
+            name="last_payment_date"
+            value={formData.last_payment_date}
+            onChange={handleChange}
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+              boxSizing: "border-box",
+            }}
+          />
+
+          <small>
+            Next payment date will be calculated automatically.
+          </small>
+        </div>
+
+        {/* REMINDER */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>Reminder Days</label>
+
+          <input
+            type="number"
+            name="reminder_days"
+            value={formData.reminder_days}
+            onChange={handleChange}
+            min="0"
+            max="30"
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+              boxSizing: "border-box",
+            }}
+          />
+
+          <small>
+            Choose between 0 and 30 days.
+          </small>
+        </div>
+
+        {/* AUTO PAY */}
+        <div style={{ marginBottom: "20px" }}>
+          <label>
+            <input
+              type="checkbox"
+              name="auto_pay"
+              checked={formData.auto_pay}
+              onChange={handleChange}
+            />
+
+            {" "}Auto-Pay Enabled
+          </label>
+        </div>
+
+        {/* END DATE */}
+        <div style={{ marginBottom: "25px" }}>
+          <label>Subscription End Date</label>
+
+          <input
+            type="date"
+            name="end_date"
+            value={formData.end_date}
+            onChange={handleChange}
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginTop: "6px",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+
+        {/* BUTTONS */}
+        <div>
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              padding: "12px 25px",
+              cursor: loading
+                ? "not-allowed"
+                : "pointer",
+            }}
+          >
+            {loading
+              ? "Adding..."
+              : "Add Subscription"}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => navigate("/dashboard")}
+            style={{
+              padding: "12px 25px",
+              marginLeft: "10px",
+              cursor: "pointer",
+            }}
+          >
+            Cancel
+          </button>
+        </div>
+
+      </form>
     </main>
   );
 }
 
-export default Dashboard;
+export default AddSubscription;
